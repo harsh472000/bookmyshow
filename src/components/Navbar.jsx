@@ -13,7 +13,7 @@ const Navbar = () => {
             BookMyShow Clone
           </Link>
         </Typography>
-        <LoginForm /> {/* ✅ Show login/logout button in Navbar */}
+        <LoginForm /> {/*Show login/logout button in Navbar */}
       </Toolbar>
     </AppBar>
   );

@@ -12,20 +12,26 @@ import {
 } from "../store/slices/eventSlice";
 import { fetchEvents } from "../utils/api";
 
+// Maximum number of tickets a user can book, fetched from environment variables
 const MAX_TICKETS = import.meta.env.VITE_APP_MAX_SEATS;
 
 const EventDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Get event ID from URL parameters
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Get event details from Redux store using the event ID
   const event = useSelector((state) =>
     state.events.events.find((e) => e.id === parseInt(id))
   );
+
+  // Get already booked seats for this event
   const bookedSeats = useSelector(
     (state) => state.events.bookedSeats[id] || {}
   );
-  const user = useSelector((state) => state.auth.user); // logged-in user
+
+  // Get logged-in user details
+  const user = useSelector((state) => state.auth.user);
 
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [seatLimitReached, setSeatLimitReached] = useState(false);
@@ -42,12 +48,14 @@ const EventDetails = () => {
     }
   }, [event, dispatch]);
 
+  // Reset selected seats when booked seats change
   useEffect(() => {
     if (bookedSeats && Object.keys(bookedSeats).length > 0) {
       setSelectedSeats([]);
     }
   }, [bookedSeats]);
 
+  // Restrict seat selection to MAX_TICKETS
   useEffect(() => {
     if (selectedSeats.length >= MAX_TICKETS && !seatLimitReached) {
       toast.error(`You cannot select more than ${MAX_TICKETS} seats.`);
@@ -58,6 +66,7 @@ const EventDetails = () => {
     }
   }, [selectedSeats]);
 
+  // Redirect to login if user is not logged in
   if (!user) {
     return (
       <Container>
@@ -71,6 +80,7 @@ const EventDetails = () => {
     );
   }
 
+  // Show error message if event is not found
   if (!event) {
     return (
       <Container>
@@ -86,6 +96,7 @@ const EventDetails = () => {
 
   const seatData = event.seats || bookedSeats;
 
+  // Handle seat selection by toggling selection state
   const handleSeatSelection = (row, seatIndex) => {
     const isSelected = selectedSeats.some(
       (seat) => seat.row === row && seat.seatIndex === seatIndex
@@ -105,6 +116,7 @@ const EventDetails = () => {
     }
   };
 
+  // Handle seat booking confirmation
   const handleConfirmBooking = () => {
     if (selectedSeats.length === 0) {
       toast.error("Please select at least one seat.");
