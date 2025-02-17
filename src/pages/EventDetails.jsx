@@ -12,7 +12,7 @@ import {
 } from "../store/slices/eventSlice";
 import { fetchEvents } from "../utils/api";
 
-const MAX_TICKETS = 6;
+const MAX_TICKETS = import.meta.env.VITE_APP_MAX_SEATS;
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -28,7 +28,7 @@ const EventDetails = () => {
   const user = useSelector((state) => state.auth.user); // logged-in user
 
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [seatLimitReached, setSeatLimitReached] = useState(false); // ✅ Track limit status
+  const [seatLimitReached, setSeatLimitReached] = useState(false);
 
   useEffect(() => {
     if (!event) {
